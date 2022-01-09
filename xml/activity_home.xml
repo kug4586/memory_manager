@@ -22,16 +22,17 @@
 
             <!--메뉴 버튼-->
             <ImageButton
-                android:id="@+id/menu"
+                android:id="@+id/menu_button"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_marginLeft="15dp"
                 android:layout_gravity="center"
-                android:background="@drawable/menu"/>
+                android:background="@drawable/menu"
+                android:contentDescription="menu button"/>
 
             <!--설정 버튼-->
             <ImageButton
-                android:id="@+id/setting"
+                android:id="@+id/setting_button"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_gravity="center"
@@ -73,9 +74,153 @@
         android:id="@+id/menu_screen"
         android:layout_width="250dp"
         android:layout_height="match_parent"
-        android:orientation="vertical"
         android:layout_gravity="left"
-        android:visibility="gone">
+        android:visibility="gone"
+        android:background="#422D10">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_margin="10dp"
+            android:background="#BC875E">
+
+            <ImageButton
+                android:id="@+id/create_table_button"
+                android:layout_width="50dp"
+                android:layout_height="40dp"
+                android:layout_gravity="right"
+                android:layout_margin="10dp"
+                android:background="@drawable/create_table" />
+
+            <TextView
+                android:id="@+id/classify_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="카테고리 만들기"
+                android:textSize="18sp"
+                android:textColor="#FFF1DD"/>
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:background="@drawable/line"/>
+
+            <TextView
+                android:id="@+id/all_table_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:textSize="18sp"
+                android:textColor="#BC875E"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!--카테고리 만들기-->
+    <LinearLayout
+        android:layout_width="350dp"
+        android:layout_height="150dp"
+        android:orientation="vertical"
+        android:layout_gravity="center"
+        android:background="#FFFFFF"
+        android:visibility="visible">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="이름"
+                android:textSize="16sp"/>
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="색상"
+                android:textSize="16sp"/>
+
+            <!--빨간색-->
+            <ImageButton
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:background="@drawable/red"
+                android:layout_marginLeft="20dp"/>
+
+            <!--주황색-->
+            <ImageButton
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:background="@drawable/orange"
+                android:layout_marginLeft="15dp"/>
+
+            <!--노란색-->
+            <ImageButton
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:background="@drawable/yellow"
+                android:layout_marginLeft="15dp"/>
+
+            <!--초록색-->
+            <ImageButton
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:background="@drawable/green"
+                android:layout_marginLeft="15dp"/>
+
+            <!--파란색-->
+            <ImageButton
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:background="@drawable/blue"
+                android:layout_marginLeft="15dp"/>
+
+            <!--남색-->
+            <ImageButton
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:background="@drawable/dark_blue"
+                android:layout_marginLeft="15dp"/>
+
+            <!--보라색-->
+            <ImageButton
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:background="@drawable/violet"
+                android:layout_marginLeft="15dp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"/>
 
     </LinearLayout>
 
