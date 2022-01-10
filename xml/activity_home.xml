@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -122,12 +121,13 @@
 
     <!--카테고리 만들기-->
     <LinearLayout
+        android:id="@+id/category_screen"
         android:layout_width="350dp"
         android:layout_height="150dp"
         android:orientation="vertical"
         android:layout_gravity="center"
         android:background="#FFFFFF"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -220,7 +220,22 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal"/>
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/cancel_classify_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="취소"/>
+
+            <Button
+                android:id="@+id/complete_classify_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="180dp"
+                android:text="만들기"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 
