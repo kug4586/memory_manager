@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FAE583"
+    tools:context=".TableList">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="#E6704016"
+            android:gravity="center|left"
+            android:paddingLeft="10dp"
+            android:text="나의 암기표"
+            android:textSize="20sp"
+            android:textColor="#502E10"/>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="분류"
+                android:textColor="#000000"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <!--카테고리 선택-->
+            <Spinner
+                android:id="@+id/category"
+                android:layout_width="150dp"
+                android:layout_height="30dp"
+                android:layout_marginStart="10dp"
+                android:background="#FFFFFF"
+                app:layout_constraintStart_toEndOf="@+id/textView"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
+
+            <!--카테고리 삭제-->
+            <ImageButton
+                android:id="@+id/delete_category"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/disposer"
+                app:layout_constraintEnd_toStartOf="@+id/add_category"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <!--카테고리 생성-->
+            <ImageButton
+                android:id="@+id/add_category"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@drawable/add_category"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/table_list"
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/create_category_screen"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="#2F000000"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="290dp"
+            android:layout_height="150dp"
+            android:orientation="vertical"
+            android:background="#A9BF9C">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp"
+                android:layout_marginHorizontal="5dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="이름"
+                    android:textColor="#000000"
+                    android:textSize="18sp"/>
+
+                <!--카테고리 이름-->
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="5dp"
+                    android:textSize="18sp"/>
+
+            </LinearLayout>
+
+            <!--색깔-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginTop="10dp">
+
+                <ImageButton
+                    android:id="@+id/red"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:background="@drawable/red"/>
+
+                <ImageButton
+                    android:id="@+id/orange"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:background="@drawable/orange"
+                    android:layout_marginLeft="10dp"/>
+
+                <ImageButton
+                    android:id="@+id/yellow"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:background="@drawable/yellow"
+                    android:layout_marginLeft="10dp"/>
+
+                <ImageButton
+                    android:id="@+id/green"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:background="@drawable/green"
+                    android:layout_marginLeft="10dp"/>
+
+                <ImageButton
+                    android:id="@+id/blue"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:background="@drawable/blue"
+                    android:layout_marginLeft="10dp"/>
+
+                <ImageButton
+                    android:id="@+id/darkblue"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:background="@drawable/darkblue"
+                    android:layout_marginLeft="10dp"/>
+
+                <ImageButton
+                    android:id="@+id/violet"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:background="@drawable/violet"
+                    android:layout_marginLeft="10dp"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp"
+                android:gravity="bottom|center">
+
+                <!--취소-->
+                <TextView
+                    android:id="@+id/create_category_cancel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:text="취소"
+                    android:textColor="#000000"
+                    android:textSize="18sp"/>
+
+                <!--만들기-->
+                <TextView
+                    android:id="@+id/create_category_complete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="170dp"
+                    android:layout_marginBottom="5dp"
+                    android:text="만들기"
+                    android:textColor="#000000"
+                    android:textSize="18sp"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

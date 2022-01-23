@@ -6,24 +6,17 @@
     android:layout_height="match_parent"
     android:background="#FAE583"
     android:orientation="vertical"
-    tools:context=".create_table">
+    tools:context=".CreateTable">
 
-    <LinearLayout
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="#E6704016"
-        android:orientation="vertical">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="left|center"
-            android:layout_marginLeft="10dp"
-            android:text="암기표 만들기"
-            android:textSize="20sp"
-            android:textColor="#502E10"/>
-
-    </LinearLayout>
+        android:gravity="center|left"
+        android:paddingLeft="10dp"
+        android:text="새로운 표"
+        android:textSize="20sp"
+        android:textColor="#502E10"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -92,7 +85,7 @@
             android:orientation="horizontal">
 
             <RadioButton
-                android:id="@+id/five_times"
+                android:id="@+id/repeat_5"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:text=" 5회"
@@ -101,16 +94,79 @@
                 android:textStyle="bold"/>
 
             <RadioButton
-                android:id="@+id/ten_times"
+                android:id="@+id/repeat_7"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_marginLeft="60dp"
+                android:layout_marginLeft="40dp"
+                android:text=" 7회"
+                android:textColor="#000000"
+                android:textSize="20sp"
+                android:textStyle="bold"/>
+
+            <RadioButton
+                android:id="@+id/repeat_10"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="40dp"
                 android:text=" 10회"
                 android:textColor="#000000"
                 android:textSize="20sp"
                 android:textStyle="bold"/>
 
         </RadioGroup>
+
+        <!--시작 날짜-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="날짜"
+                android:textColor="#000000"
+                android:textSize="20dp"
+                android:textStyle="bold"/>
+
+            <RadioGroup
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_marginLeft="30dp">
+
+                <RadioButton
+                    android:id="@+id/date_now"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="오늘"
+                    android:textColor="#000000"
+                    android:textSize="18sp"
+                    android:textStyle="bold"/>
+
+                <RadioButton
+                    android:id="@+id/date_custom"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="50dp"
+                    android:text="직접 입력"
+                    android:textColor="#000000"
+                    android:textSize="18sp"
+                    android:textStyle="bold"/>
+
+            </RadioGroup>
+
+        </LinearLayout>
+
+        <!--직접 날짜 입력-->
+        <EditText
+            android:id="@+id/enter_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#000000"
+            android:textSize="20dp"
+            android:hint="ex) 20220101"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -119,23 +175,25 @@
             android:gravity="center"
             android:orientation="horizontal">
 
-            <!--되돌아가기 버튼-->
-            <Button
-                android:id="@+id/cancel_creating_table"
-                android:layout_width="100dp"
-                android:layout_height="match_parent"
+            <!--돌아기기-->
+            <TextView
+                android:id="@+id/create_table_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="취소"
-                android:textSize="20sp"
+                android:textSize="24sp"
+                android:textColor="#000000"
                 android:textStyle="bold"/>
 
-            <!--설정 적용 버튼-->
-            <Button
-                android:id="@+id/complete_creating_table"
-                android:layout_width="100dp"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="60dp"
-                android:text="완료"
-                android:textSize="20sp"
+            <!--완료-->
+            <TextView
+                android:id="@+id/create_table_complete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="120dp"
+                android:text="만들기"
+                android:textSize="24sp"
+                android:textColor="#000000"
                 android:textStyle="bold"/>
 
         </LinearLayout>

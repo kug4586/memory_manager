@@ -6,24 +6,17 @@
     android:layout_height="match_parent"
     android:background="#FAE583"
     android:orientation="vertical"
-    tools:context=".setting">
+    tools:context=".Setting">
 
-    <LinearLayout
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="#E6704016"
-        android:orientation="vertical">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="left|center"
-            android:layout_marginLeft="10dp"
-            android:text="설정"
-            android:textSize="20sp"
-            android:textColor="#502E10"/>
-
-    </LinearLayout>
+        android:gravity="center|left"
+        android:paddingLeft="10dp"
+        android:text="설정"
+        android:textSize="20sp"
+        android:textColor="#502E10"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -48,7 +41,7 @@
                 android:textStyle="bold"/>
 
             <RadioButton
-                android:id="@+id/alarm_onoff"
+                android:id="@+id/alarm_on_off"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"/>
@@ -130,22 +123,24 @@
             android:layout_marginTop="50dp"
             android:orientation="horizontal">
 
-            <!--돌아가기 버튼-->
-            <Button
-                android:id="@+id/cancel_setting"
+            <TextView
+                android:id="@+id/setting_cancel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="취소"
-                android:textSize="18sp"/>
+                android:textSize="24sp"
+                android:textColor="#000000"
+                android:textStyle="bold"/>
 
-            <!--설정 적용 버튼-->
-            <Button
-                android:id="@+id/complete_setting"
+            <TextView
+                android:id="@+id/setting_complete"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="50dp"
-                android:text="적용"
-                android:textSize="18sp"/>
+                android:layout_marginLeft="130dp"
+                android:text="설정"
+                android:textSize="24sp"
+                android:textColor="#000000"
+                android:textStyle="bold"/>
 
         </LinearLayout>
 
