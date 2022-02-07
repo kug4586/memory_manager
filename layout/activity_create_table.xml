@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -36,7 +35,6 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="이름"
-                android:textColor="#000000"
                 android:textSize="20sp"
                 android:textStyle="bold"/>
 
@@ -66,12 +64,11 @@
                 android:layout_gravity="center"
                 android:background="#FAE583"
                 android:text="카테고리 "
-                android:textColor="#000000"
                 android:textSize="20sp"
                 android:textStyle="bold"/>
 
             <Spinner
-                android:id="@+id/category"
+                android:id="@+id/category_T"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
 
@@ -79,6 +76,7 @@
 
         <!--복습 횟수 설정-->
         <RadioGroup
+            android:id="@+id/count_of_repeat"
             android:layout_width="match_parent"
             android:layout_height="30dp"
             android:layout_marginTop="50dp"
@@ -89,7 +87,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:text=" 5회"
-                android:textColor="#000000"
                 android:textSize="20sp"
                 android:textStyle="bold"/>
 
@@ -99,7 +96,6 @@
                 android:layout_height="match_parent"
                 android:layout_marginLeft="40dp"
                 android:text=" 7회"
-                android:textColor="#000000"
                 android:textSize="20sp"
                 android:textStyle="bold"/>
 
@@ -109,7 +105,6 @@
                 android:layout_height="match_parent"
                 android:layout_marginLeft="40dp"
                 android:text=" 10회"
-                android:textColor="#000000"
                 android:textSize="20sp"
                 android:textStyle="bold"/>
 
@@ -126,11 +121,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="날짜"
-                android:textColor="#000000"
                 android:textSize="20dp"
                 android:textStyle="bold"/>
 
             <RadioGroup
+                android:id="@+id/set_date"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
@@ -141,7 +136,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="오늘"
-                    android:textColor="#000000"
                     android:textSize="18sp"
                     android:textStyle="bold"/>
 
@@ -151,7 +145,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="50dp"
                     android:text="직접 입력"
-                    android:textColor="#000000"
                     android:textSize="18sp"
                     android:textStyle="bold"/>
 
@@ -161,10 +154,9 @@
 
         <!--직접 날짜 입력-->
         <EditText
-            android:id="@+id/enter_date"
+            android:id="@+id/enter_date_self"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="#000000"
             android:textSize="20dp"
             android:hint="ex) 20220101"/>
 
@@ -182,7 +174,6 @@
                 android:layout_height="wrap_content"
                 android:text="취소"
                 android:textSize="24sp"
-                android:textColor="#000000"
                 android:textStyle="bold"/>
 
             <!--완료-->
@@ -193,7 +184,6 @@
                 android:layout_marginLeft="120dp"
                 android:text="만들기"
                 android:textSize="24sp"
-                android:textColor="#000000"
                 android:textStyle="bold"/>
 
         </LinearLayout>
