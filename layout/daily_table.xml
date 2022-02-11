@@ -36,7 +36,7 @@
         android:background="#FFFFFF">
 
         <TextView
-            android:id="@+id/TableName"
+            android:id="@+id/TableName_of_DailyTable"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingVertical="7dp"

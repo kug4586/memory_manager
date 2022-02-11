@@ -79,7 +79,13 @@ public class MenuFragment extends Fragment {
         create_table_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // 액티비티 이동하기
                 startActivity(new Intent(ct, CreateTable.class));
+                // 메뉴 화면 넣기
+                if (is_menu_open) {
+                    ChangeMenu();
+                    callback.disappear_hahaha();
+                }
             }
         });
 
@@ -87,7 +93,13 @@ public class MenuFragment extends Fragment {
         classify_manager_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // 액티비티 이동하기
                 startActivity(new Intent(ct, TableList.class));
+                // 메뉴 화면 넣기
+                if (is_menu_open) {
+                    ChangeMenu();
+                    callback.disappear_hahaha();
+                }
             }
         });
 

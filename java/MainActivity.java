@@ -3,18 +3,11 @@ package com.example.android_app;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 
-import android.app.Activity;
-import android.content.SharedPreferences;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements HomeFragment.HomeCallback, MenuFragment.MenuCallback {
 
     public boolean is_menu_open = false;
-    int table_count;
 
     HomeFragment home_fragment;
     MenuFragment menu_fragment;
@@ -33,36 +26,14 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Home
         menu_fragment = (MenuFragment) manager.findFragmentById(R.id.menu);
 
         // 데이터베이스 핼퍼 부르기
-        ResortedState();
         db_helper = new DatabaseHelper(this);
-        db_helper.GetTableCount(table_count);
-        db_helper.getWritableDatabase();
     }
 
     // 액티비티가 파괴될 때
     @Override
     protected void onDestroy() {
-        // 데이터베이스 핼퍼로 연결 끊기
-        table_count = db_helper.SetTableCount();
-        SaveState();
         db_helper.close();
         super.onDestroy();
-    }
-
-    // 환경변수 복원하기
-    protected void ResortedState() {
-        SharedPreferences pref = getSharedPreferences("TableCount", Activity.MODE_PRIVATE);
-        if (pref != null && pref.contains("TableCount")) {
-            table_count = pref.getInt("TableCount", 0);
-        }
-    }
-
-    // 환경변수 저장하기
-    protected void SaveState() {
-        SharedPreferences pref = getSharedPreferences("TableCount", Activity.MODE_PRIVATE);
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putInt("TableCount", table_count);
-        editor.commit();
     }
 
     // 뒤로가기 버튼을 눌렀을 때

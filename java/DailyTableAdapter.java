@@ -1,8 +1,6 @@
 package com.example.android_app;
 
-import android.animation.AnimatorSet;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -10,7 +8,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -36,7 +33,7 @@ public class DailyTableAdapter
     public void addItem(DailyTable item) {
         items.add(item);
     }
-    // 기존 items를 다시 설정
+    // 실행하는 위치의 items를 가져옴
     public void setItems(ArrayList<DailyTable> items) {
         this.items = items;
     }
@@ -47,6 +44,15 @@ public class DailyTableAdapter
     // items의 특정 위치에 아이템 저장
     public void setItem(int position, DailyTable item) {
         items.set(position, item);
+    }
+    // items 속 모든 아이템을 삭제
+    public void RemoveAllItem() {
+        items.clear();
+    }
+    // items 속 특정 아이템 삭제
+    public void RemoveItem(String item) {
+        int index = items.indexOf(item);
+        items.remove(index);
     }
 
     // 뷰홀더가 새로 만들어질 때, 뷰 객체를 새로 만듦
@@ -81,7 +87,7 @@ public class DailyTableAdapter
         public ViewHolder(View itemView, final OnDailyTableClickListener listener) {
             super(itemView);
             // 카드뷰의 객체들
-            name = itemView.findViewById(R.id.TableName);
+            name = itemView.findViewById(R.id.TableName_of_DailyTable);
             count = itemView.findViewById(R.id.CountOfRepeat);
             clear_btn = itemView.findViewById(R.id.ClearBtn);
             front_card = itemView.findViewById(R.id.FrontCard);
@@ -96,7 +102,7 @@ public class DailyTableAdapter
                 }
             });
         }
-        // 뷰홀더 안의 뷰 객체에서 데이터 뽑아내기
+        // 뷰홀더에 데이터 설정하기
         public void setItem(DailyTable item) {
             name.setText(item.get_table_name());
             count.setText(item.get_count_of_repeat());

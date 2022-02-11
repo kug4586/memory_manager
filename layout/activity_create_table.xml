@@ -18,10 +18,11 @@
         android:textColor="#502E10"/>
 
     <LinearLayout
+        android:id="@+id/EmptySpace"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:layout_margin="20dp">
+        android:padding="20dp">
 
         <!--표 이름 설정-->
         <LinearLayout

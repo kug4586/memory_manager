@@ -18,7 +18,7 @@
             android:background="#E6704016"
             android:gravity="center|left"
             android:paddingLeft="10dp"
-            android:text="나의 암기표"
+            android:text="내 암기표"
             android:textSize="20sp"
             android:textColor="#502E10"/>
 
@@ -42,7 +42,7 @@
 
             <!--카테고리 선택-->
             <Spinner
-                android:id="@+id/category"
+                android:id="@+id/category_L"
                 android:layout_width="150dp"
                 android:layout_height="30dp"
                 android:layout_marginStart="10dp"
@@ -111,6 +111,7 @@
 
                 <!--카테고리 이름-->
                 <EditText
+                    android:id="@+id/category_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="5dp"
@@ -126,48 +127,48 @@
                 android:gravity="center"
                 android:layout_marginTop="10dp">
 
-                <ImageButton
+                <ImageView
                     android:id="@+id/red"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:background="@drawable/red"/>
 
-                <ImageButton
+                <ImageView
                     android:id="@+id/orange"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:background="@drawable/orange"
                     android:layout_marginLeft="10dp"/>
 
-                <ImageButton
+                <ImageView
                     android:id="@+id/yellow"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:background="@drawable/yellow"
                     android:layout_marginLeft="10dp"/>
 
-                <ImageButton
+                <ImageView
                     android:id="@+id/green"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:background="@drawable/green"
                     android:layout_marginLeft="10dp"/>
 
-                <ImageButton
+                <ImageView
                     android:id="@+id/blue"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:background="@drawable/blue"
                     android:layout_marginLeft="10dp"/>
 
-                <ImageButton
+                <ImageView
                     android:id="@+id/darkblue"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:background="@drawable/darkblue"
                     android:layout_marginLeft="10dp"/>
 
-                <ImageButton
+                <ImageView
                     android:id="@+id/violet"
                     android:layout_width="30dp"
                     android:layout_height="30dp"

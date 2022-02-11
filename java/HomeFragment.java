@@ -6,22 +6,22 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class HomeFragment extends Fragment {
 
@@ -33,6 +33,10 @@ public class HomeFragment extends Fragment {
 
     public boolean is_menu_close = true;
     private Context ct;
+
+    SimpleDateFormat format = new SimpleDateFormat("MM/dd");
+    public Date today;
+    public String today_text;
 
     Animation transparent_on;
     Animation transparent_off;
@@ -60,6 +64,8 @@ public class HomeFragment extends Fragment {
             callback = (HomeCallback) context;
         }
         db_helper = new DatabaseHelper(context);
+        today = new Date();
+        today_text = format.format(today);
     }
 
     // 프래그먼트의 뷰를 전달함
@@ -90,6 +96,7 @@ public class HomeFragment extends Fragment {
         transparent_on.setAnimationListener(listener);
         transparent_off.setAnimationListener(listener);
 
+        // 메뉴가 열려있을 때, 홈 화면 클릭을 막음
         hahaha.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -101,6 +108,7 @@ public class HomeFragment extends Fragment {
         menu_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // 메뉴 화면 넣기
                 if (callback != null) {
                     callback.change_menu();
                     set_hahaha();
@@ -112,6 +120,7 @@ public class HomeFragment extends Fragment {
         setting_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // 액티비티 이동
                 startActivity(new Intent(ct, Setting.class));
             }
         });
@@ -121,15 +130,6 @@ public class HomeFragment extends Fragment {
         daily_tables_screen.setLayoutManager(manager);
         adapter = new DailyTableAdapter();
 
-        adapter.addItem(new DailyTable("2021.11", "1st"));
-        adapter.addItem(new DailyTable("2020.11", "1st"));
-        adapter.addItem(new DailyTable("2019.11", "1st"));
-        adapter.addItem(new DailyTable("2018.11", "1st"));
-        adapter.addItem(new DailyTable("2017.11", "1st"));
-        adapter.addItem(new DailyTable("2016.11", "1st"));
-        adapter.addItem(new DailyTable("2015.11", "1st"));
-
-        daily_tables_screen.setAdapter(adapter);
         adapter.setOnItemClickListener(new OnDailyTableClickListener() {
             // 일반적으로 터치할 때
             @Override
@@ -161,6 +161,20 @@ public class HomeFragment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onResume() {
+        String[][] daily_table_group = db_helper.FilterDailyTable(today_text);
+
+        for (int i=adapter.items.size(); i<daily_table_group.length; i++) {
+            adapter.addItem(new DailyTable(daily_table_group[i][0], daily_table_group[i][1]));
+        }
+
+        daily_tables_screen.setAdapter(adapter);
+        super.onResume();
+    }
+
+
+    // 터치 방지용 뷰의 애니메이션 리스너
     private class anim_listener implements Animation.AnimationListener {
         @Override
         public void onAnimationStart(Animation animation) {}
@@ -174,6 +188,7 @@ public class HomeFragment extends Fragment {
         public void onAnimationRepeat(Animation animation) {}
     }
 
+    // 버튼 온오프
     public void button_on_off() {
         if (is_menu_close) {
             menu_button.setEnabled(false);
@@ -184,6 +199,7 @@ public class HomeFragment extends Fragment {
         }
     }
 
+    // 터치 방지용 뷰의 애니메이션
     public void set_hahaha() {
         if (is_menu_close) {
             hahaha.setVisibility(View.VISIBLE);

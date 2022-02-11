@@ -11,8 +11,8 @@ public class DailyTable {
         this.count_of_repeat = count_of_repeat;
     }
 
-    // get~ : 내용물 가져오기
-    // set~ : 내용물 집어넣기
+    // get~ : 실행하는 위치로 내용물 보냄
+    // set~ : 실행하는 위치에서 내용물 가져옴
 
     public String get_table_name() {
         return table_name;

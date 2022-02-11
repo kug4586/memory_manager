@@ -3,10 +3,14 @@ package com.example.android_app;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -19,10 +23,10 @@ import java.util.Date;
 
 public class CreateTable extends AppCompatActivity {
 
-    String[] a = {"국어", "수학", "영어"};
+    private String[] categories;
     int review_count;
     int type_of_setting_date;
-    String category;
+    private String category;
 
     TextView create_table_cancel;
     TextView create_table_complete;
@@ -31,8 +35,9 @@ public class CreateTable extends AppCompatActivity {
     Spinner category_T;
     RadioGroup count_of_repeat;
     RadioGroup set_date;
+    LinearLayout empty_space;
 
-    DatabaseHelper db_helper = new DatabaseHelper(this);
+    DatabaseHelper db_helper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +45,7 @@ public class CreateTable extends AppCompatActivity {
         setContentView(R.layout.activity_create_table);
         review_count = 0; // 반복 횟수 초기화
         type_of_setting_date = 0; // 날짜 설정 방식 초기화
+        db_helper = new DatabaseHelper(this);
 
         // id로 뷰 객체 불러오기
         create_table_cancel = findViewById(R.id.create_table_cancel);
@@ -49,21 +55,43 @@ public class CreateTable extends AppCompatActivity {
         category_T = findViewById(R.id.category_T);
         count_of_repeat = findViewById(R.id.count_of_repeat);
         set_date = findViewById(R.id.set_date);
+        empty_space = findViewById(R.id.EmptySpace);
+
+
+        // 빈 공간 터치했을 때
+        empty_space.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                // 키보드 열려있으면 닫기
+                CloseKeyBoard(table_name);
+                return true;
+            }
+        });
+
 
         // 카테고리 설정
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, a);
+        categories = db_helper.InquiryCategory();
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, categories);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
         category_T.setAdapter(adapter);
-
+        // 아이템 클릭했을 때
         category_T.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-                category = a[position];
+                category = categories[position];
             }
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {}
         });
+        category_T.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                // 키보드 열려있으면 닫기
+                CloseKeyBoard(table_name);
+                return false;
+            }
+        });
+
 
         // <표 생성> 취소
         create_table_cancel.setOnClickListener(new View.OnClickListener() {
@@ -72,7 +100,6 @@ public class CreateTable extends AppCompatActivity {
                 finish();
             }
         });
-
         // <표 생성> 완료
         create_table_complete.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,16 +112,23 @@ public class CreateTable extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 if (dates[0] != null) {
-                    db_helper.CreateReviewTable(table_name.getText().toString(), category, dates, review_count);
+                    Log.d("DB", "테이블 만듦 : " + table_name.getText().toString() + " / " + category + "\n"
+                            + dates[0] + dates[1] + dates[2] + dates[3] + dates[4] + dates[5] + dates[6] + dates[7] + dates[8] + dates[9]);
+                    db_helper.CreateReviewTable(table_name.getText().toString(), category, dates);
+                    CloseKeyBoard(table_name);
                     finish();
                 }
             }
         });
 
-        // 반복 횟수 설정
+
+        // 아이템 클릭했을 때
         count_of_repeat.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                // 키보드 열려있으면 닫기
+                CloseKeyBoard(table_name);
+                // 반복 횟수 설정
                 if (i == R.id.repeat_5) {
                     review_count = 5;
                 } else if (i == R.id.repeat_7) {
@@ -104,8 +138,20 @@ public class CreateTable extends AppCompatActivity {
                 }
             }
         });
+        // 객체 클릭했을 때
+        count_of_repeat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // 키보드 열려있으면 닫기
+                CloseKeyBoard(table_name);
+            }
+        });
+
 
         // 날짜 설정
+        // 선택 안됨
+        enter_date_self.setEnabled(false);
+        type_of_setting_date = 0;
         set_date.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
@@ -117,10 +163,6 @@ public class CreateTable extends AppCompatActivity {
                     // 사용자 지정 날짜
                     enter_date_self.setEnabled(true);
                     type_of_setting_date = 2;
-                } else {
-                    // 선택 안됨
-                    enter_date_self.setEnabled(false);
-                    type_of_setting_date = 0;
                 }
             }
         });
@@ -130,6 +172,14 @@ public class CreateTable extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         finish();
+    }
+
+    // 키보드 열린거 닫기
+    public void CloseKeyBoard(EditText et) {
+        InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        if (imm.isActive(et)) {
+            imm.hideSoftInputFromWindow(et.getWindowToken(), 0);
+        }
     }
 
     // 첫쌔날을 기준으로 암기 날짜 생성하기
@@ -169,9 +219,14 @@ public class CreateTable extends AppCompatActivity {
         String[] dates_text = new String[10];
         SimpleDateFormat date_format = new SimpleDateFormat("MM/dd");
         for (int i=0; i<10; i++) {
-            dates_text[i] = date_format.format(dates_raw[i]);
+            if (dates_raw[i] != null) {
+                dates_text[i] = date_format.format(dates_raw[i]);
+            } else {
+                dates_text[i] = null;
+            }
         }
 
+        Log.d("DB", "InflateDate 완료");
         return dates_text;
     }
 }

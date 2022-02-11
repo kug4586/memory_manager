@@ -22,21 +22,25 @@
 
         <!--표의 이름-->
         <TextView
+            android:id="@+id/name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
             android:textSize="30sp"
             android:textColor="#000000"/>
 
         <!--표의 카테고리-->
         <TextView
+            android:id="@+id/category"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:layout_marginLeft="5dp"
+            android:gravity="center_horizontal"
             android:textSize="18sp"/>
 
         <!--표-->
         <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/review"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="10dp"/>
