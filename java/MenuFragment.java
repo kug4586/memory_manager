@@ -3,6 +3,7 @@ package com.example.android_app;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class MenuFragment extends Fragment {
 
@@ -25,6 +28,10 @@ public class MenuFragment extends Fragment {
 
     public boolean is_menu_open = false;
     private Context ct;
+    private String[] categories;
+    private int[][] color_count;
+
+    BriefInfoAdapter adapter;
 
     Animation translate_left_anim;
     Animation translate_right_anim;
@@ -33,6 +40,9 @@ public class MenuFragment extends Fragment {
     View empty_space;
     ImageButton create_table_button;
     TextView classify_manager_button;
+    RecyclerView brief_list;
+
+    DatabaseHelper db_helper;
 
     // 프레그먼트와 액티비티가 연결될 때
     @Override
@@ -42,6 +52,7 @@ public class MenuFragment extends Fragment {
         if (context instanceof MenuCallback) {
             callback = (MenuCallback) context;
         }
+        db_helper = new DatabaseHelper(context);
     }
 
     // 프레그먼트에 뷰를 전달함
@@ -54,6 +65,7 @@ public class MenuFragment extends Fragment {
         empty_space = rootView.findViewById(R.id.empty_space);
         create_table_button = rootView.findViewById(R.id.create_table_button);
         classify_manager_button = rootView.findViewById(R.id.classify_manager_button);
+        brief_list = rootView.findViewById(R.id.brief_list);
 
         // 애니메이션 불러오기
         translate_left_anim = AnimationUtils.loadAnimation(ct, R.anim.translate_left);
@@ -79,12 +91,12 @@ public class MenuFragment extends Fragment {
         create_table_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // 액티비티 이동하기
-                startActivity(new Intent(ct, CreateTable.class));
                 // 메뉴 화면 넣기
                 if (is_menu_open) {
                     ChangeMenu();
                     callback.disappear_hahaha();
+                    // 액티비티 이동하기
+                    startActivity(new Intent(ct, CreateTable.class));
                 }
             }
         });
@@ -93,17 +105,49 @@ public class MenuFragment extends Fragment {
         classify_manager_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // 액티비티 이동하기
-                startActivity(new Intent(ct, TableList.class));
-                // 메뉴 화면 넣기
                 if (is_menu_open) {
-                    ChangeMenu();
-                    callback.disappear_hahaha();
+                    // 액티비티 이동하기
+                    startActivity(new Intent(ct, TableList.class));
                 }
             }
         });
 
+        // 간단한 목록
+        LinearLayoutManager manager = new LinearLayoutManager(ct, RecyclerView.VERTICAL, false);
+        brief_list.setLayoutManager(manager);
+        adapter = new BriefInfoAdapter();
+
+        adapter.SetOnItemClickListener(new OnBriefInfoClickListener() {
+            @Override
+            public void OnItemClick(BriefInfoAdapter.ViewHolder holder, View view, int position) {
+                Intent intent = new Intent(ct, TableList.class);
+                intent.putExtra("category", categories[position]);
+                startActivity(intent);
+            }
+        });
+
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        SetList();
+        super.onResume();
+    }
+
+    // 테이블 설정하기
+    public void SetList() {
+        categories = db_helper.InquiryCategory();
+        color_count = db_helper.InquiryColorAndCount();
+
+        if (adapter.items.size() != 0) {
+            adapter.RemoveAllItem();
+        }
+        for (int i=0; i<categories.length; i++) {
+            adapter.AddItem(new BriefInfo(
+                    categories[i] + " (" + color_count[0][i] + ")", color_count[1][i]));
+        }
+        brief_list.setAdapter(adapter);
     }
 
     // 메뉴 애니메이션 리스너

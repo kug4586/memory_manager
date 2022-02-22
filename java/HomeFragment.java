@@ -1,11 +1,13 @@
 package com.example.android_app;
 
+import android.animation.Animator;
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -22,6 +24,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
 
 public class HomeFragment extends Fragment {
 
@@ -42,8 +48,8 @@ public class HomeFragment extends Fragment {
     Animation transparent_off;
     AnimatorSet flip_in;
     AnimatorSet flip_out;
-    AnimatorSet past_flip_in;
-    AnimatorSet past_flip_out;
+    AnimatorSet prior_flip_in;
+    AnimatorSet prior_flip_out;
 
     DailyTableAdapter adapter;
     DailyTableAdapter.ViewHolder prior_holder;
@@ -52,6 +58,7 @@ public class HomeFragment extends Fragment {
     ImageView setting_button;
     RecyclerView daily_tables_screen;
     View hahaha;
+    View no_touch;
 
     DatabaseHelper db_helper;
 
@@ -80,24 +87,35 @@ public class HomeFragment extends Fragment {
         setting_button = rootView.findViewById(R.id.setting_button);
         daily_tables_screen = rootView.findViewById(R.id.daily_tables_screen);
         hahaha = rootView.findViewById(R.id.hahaha);
+        no_touch = rootView.findViewById(R.id.NoTouch);
 
         // 해상도 값 가져오기
         Float scale = ct.getResources().getDisplayMetrics().density;
 
-        // 애니메이션
+        // 투명화 애니메이션
         transparent_on = AnimationUtils.loadAnimation(ct, R.anim.transparent_on);
         transparent_off = AnimationUtils.loadAnimation(ct, R.anim.transparent_off);
-        flip_in = (AnimatorSet) AnimatorInflater.loadAnimator(ct, R.anim.flip_in);
-        flip_out = (AnimatorSet) AnimatorInflater.loadAnimator(ct, R.anim.flip_out);
-        past_flip_in = (AnimatorSet) AnimatorInflater.loadAnimator(ct, R.anim.flip_in);
-        past_flip_out = (AnimatorSet) AnimatorInflater.loadAnimator(ct, R.anim.flip_out);
 
         anim_listener listener = new anim_listener();
         transparent_on.setAnimationListener(listener);
         transparent_off.setAnimationListener(listener);
 
+        // 카드 플립 애니메이션
+        flip_in = (AnimatorSet) AnimatorInflater.loadAnimator(ct, R.anim.flip_in);
+        flip_out = (AnimatorSet) AnimatorInflater.loadAnimator(ct, R.anim.flip_out);
+        prior_flip_in = (AnimatorSet) AnimatorInflater.loadAnimator(ct, R.anim.flip_in);
+        prior_flip_out = (AnimatorSet) AnimatorInflater.loadAnimator(ct, R.anim.flip_out);
+
         // 메뉴가 열려있을 때, 홈 화면 클릭을 막음
         hahaha.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                return true;
+            }
+        });
+
+        // 리싸이클러뷰 애니메이션 동작할 때 터치 막기
+        no_touch.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 return true;
@@ -134,19 +152,28 @@ public class HomeFragment extends Fragment {
             // 일반적으로 터치할 때
             @Override
             public void onItemClick(DailyTableAdapter.ViewHolder holder, View view) {
+                // 터치 방지 활성화
+                no_touch.setVisibility(View.VISIBLE);
+
                 // 해상도 적용하기
                 holder.front_card.setCameraDistance(1000 * scale);
                 holder.back_card.setCameraDistance(1000 * scale);
 
-                // 이전에 누른 뷰홀더가 지금 누른 뷰홀더와 같다면
+                // 애니메이션에 리스너 설정
+                flip_in.removeAllListeners();
+                prior_flip_in.removeAllListeners();
+                flip_in.addListener(new CardFlipListener(holder));
+                prior_flip_in.addListener(new CardFlipListener(prior_holder));
+
+                // 이전에 누른 뷰홀더가 지금 누른 뷰홀더와 다르다면
                 if (holder != prior_holder) {
                     // 이전의 누른 것이 있다면 -> 처음 누른 것이 아니라면
                     if (prior_holder != null) {
                         // 이전 뷰홀더는 앞면을 보여줌
-                        past_flip_in.setTarget(prior_holder.back_card);
-                        past_flip_out.setTarget(prior_holder.front_card);
-                        past_flip_in.start();
-                        past_flip_out.start();
+                        prior_flip_in.setTarget(prior_holder.back_card);
+                        prior_flip_out.setTarget(prior_holder.front_card);
+                        prior_flip_in.start();
+                        prior_flip_out.start();
                     }
                     // 현재 뷰홀더는 뒷면을 보여줌.
                     flip_in.setTarget(holder.front_card);
@@ -155,6 +182,57 @@ public class HomeFragment extends Fragment {
                     flip_out.start();
                     prior_holder = holder;
                 }
+
+                // 터치 방지 해제
+                no_touch.setVisibility(View.GONE);
+            }
+            // 복습 버튼을 꾹 눌렀을 때
+            @Override
+            public void OnLongClick(DailyTableAdapter.ViewHolder holder, View view, int position) {
+                // 터치 방지 활성화
+                no_touch.setVisibility(View.VISIBLE);
+
+                // 실행된 아이템 설정하기
+                DailyTable item = adapter.getItem(position);
+                // DB에 기록하기
+                db_helper.RecordReview(item.get_table_name(), item.GetCategory());
+                // 애니메이션
+                Animation review_anim = AnimationUtils.loadAnimation(ct, R.anim.check);
+                Animation disappear_anim = AnimationUtils.loadAnimation(ct, R.anim.disappear);
+
+                // 복습 체크 애니메이션 리스너
+                review_anim.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {}
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        new Timer().schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                holder.itemView.startAnimation(disappear_anim);
+                            }
+                        }, 1000); // 1초 뒤에 실행
+                   }
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {}
+                });
+                // 사라짐 애니메이션 리스너
+                disappear_anim.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {}
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        holder.itemView.setVisibility(View.GONE);
+                        // 일일복습표 설정하기
+                        adapter.RemoveItem(position);
+                        // 터치 방지 해제
+                        no_touch.setVisibility(View.GONE);
+                    }
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {}
+                });
+                holder.review_img.setVisibility(View.VISIBLE);
+                holder.review_img.startAnimation(review_anim);
             }
         });
 
@@ -163,16 +241,56 @@ public class HomeFragment extends Fragment {
 
     @Override
     public void onResume() {
-        String[][] daily_table_group = db_helper.FilterDailyTable(today_text);
-
-        for (int i=adapter.items.size(); i<daily_table_group.length; i++) {
-            adapter.addItem(new DailyTable(daily_table_group[i][0], daily_table_group[i][1]));
-        }
-
-        daily_tables_screen.setAdapter(adapter);
+        SetDailyTablesScreen();
         super.onResume();
     }
 
+    // 일일복습표 설정하기
+    public void SetDailyTablesScreen() {
+        // db에서 데이터 뽑기
+        String[][] daily_table_group = db_helper.FilterDailyTable(today_text);
+        // 어뎁터의 기존 데이터 삭제
+        if (adapter.items.size() != 0) {
+            adapter.RemoveAllItem();
+        }
+        // 어뎁터에 아이템 추가
+        for (int i=0; i<daily_table_group.length; i++) {
+            adapter.addItem(new DailyTable(
+                    daily_table_group[i][0], daily_table_group[i][1], daily_table_group[i][2]));
+        }
+        // 리싸이클러뷰 설정하기
+        daily_tables_screen.setAdapter(adapter);
+    }
+
+    // 카드 플립 애니메이션 리스너
+    private class CardFlipListener implements Animator.AnimatorListener {
+        DailyTableAdapter.ViewHolder holder;
+        public CardFlipListener(DailyTableAdapter.ViewHolder holder) {
+            this.holder = holder;
+        }
+        @Override
+        public void onAnimationStart(Animator animator) {
+            if (holder.is_flipped) {
+                holder.front_card.setVisibility(View.VISIBLE);
+            } else {
+                holder.back_card.setVisibility(View.VISIBLE);
+            }
+        }
+        @Override
+        public void onAnimationEnd(Animator animator) {
+            if (holder.is_flipped) {
+                holder.back_card.setVisibility(View.GONE);
+                holder.is_flipped = false;
+            } else {
+                holder.front_card.setVisibility(View.GONE);
+                holder.is_flipped = true;
+            }
+        }
+        @Override
+        public void onAnimationCancel(Animator animator) {}
+        @Override
+        public void onAnimationRepeat(Animator animator) {}
+    }
 
     // 터치 방지용 뷰의 애니메이션 리스너
     private class anim_listener implements Animation.AnimationListener {

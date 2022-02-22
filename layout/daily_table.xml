@@ -10,13 +10,14 @@
     android:clickable="true">
 
     <!--뒷면-->
-    <LinearLayout
+    <FrameLayout
         android:id="@+id/BackCard"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:gravity="center"
-        android:background="#4FA519">
+        android:background="#4FA519"
+        android:visibility="gone">
 
         <ImageView
             android:id="@+id/ClearBtn"
@@ -25,7 +26,16 @@
             android:layout_gravity="center"
             android:background="@drawable/clear"/>
 
-    </LinearLayout>
+        <ImageView
+            android:id="@+id/ReviewImg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="45dp"
+            android:layout_marginTop="40dp"
+            android:src="@drawable/check"
+            android:visibility="gone"/>
+
+    </FrameLayout>
 
     <!--앞면-->
     <LinearLayout

@@ -45,6 +45,7 @@ public class CreateTable extends AppCompatActivity {
         setContentView(R.layout.activity_create_table);
         review_count = 0; // 반복 횟수 초기화
         type_of_setting_date = 0; // 날짜 설정 방식 초기화
+        category = null; // 카테고리 초기화
         db_helper = new DatabaseHelper(this);
 
         // id로 뷰 객체 불러오기
@@ -105,18 +106,24 @@ public class CreateTable extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String[] dates = new String[10];
-                try {
-                    dates = InflateDate(review_count, type_of_setting_date);
-                } catch (ParseException e) {
-                    Toast.makeText(getApplicationContext(), "입력 방식에 맞춰 입력해주세요", Toast.LENGTH_SHORT).show();
-                    e.printStackTrace();
-                }
-                if (dates[0] != null) {
-                    Log.d("DB", "테이블 만듦 : " + table_name.getText().toString() + " / " + category + "\n"
-                            + dates[0] + dates[1] + dates[2] + dates[3] + dates[4] + dates[5] + dates[6] + dates[7] + dates[8] + dates[9]);
-                    db_helper.CreateReviewTable(table_name.getText().toString(), category, dates);
-                    CloseKeyBoard(table_name);
-                    finish();
+                if (table_name.length() == 0) {
+                    Toast.makeText(CreateTable.this, "이름을 입력해 주세요", Toast.LENGTH_SHORT).show();
+                } else if (category == null) {
+                    Toast.makeText(CreateTable.this, "카테고리를 선택해 주세요", Toast.LENGTH_SHORT).show();
+                } else if (review_count == 0) {
+                    Toast.makeText(CreateTable.this, "복습 횟수를 설정해 주세요", Toast.LENGTH_SHORT).show();
+                } else if (type_of_setting_date == 0) {
+                    Toast.makeText(CreateTable.this, "날짜를 설정해 주세요", Toast.LENGTH_SHORT).show();
+                } else {
+                    try {
+                        dates = InflateDate(review_count, type_of_setting_date);
+                        db_helper.CreateReviewTable(table_name.getText().toString(), category, dates);
+                        CloseKeyBoard(table_name);
+                        finish();
+                    } catch (ParseException e) {
+                        Toast.makeText(CreateTable.this, "입력 방식에 맞춰 입력해주세요", Toast.LENGTH_SHORT).show();
+                        e.printStackTrace();
+                    }
                 }
             }
         });
@@ -151,7 +158,6 @@ public class CreateTable extends AppCompatActivity {
         // 날짜 설정
         // 선택 안됨
         enter_date_self.setEnabled(false);
-        type_of_setting_date = 0;
         set_date.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
@@ -192,7 +198,7 @@ public class CreateTable extends AppCompatActivity {
             SimpleDateFormat de_date_format = new SimpleDateFormat("yyyyMMdd");
             first_day = de_date_format.parse(enter_date_self.getText().toString());
         } else {
-            Toast.makeText(getApplicationContext(), "날짜를 입력해주세요", Toast.LENGTH_SHORT).show();
+            Toast.makeText(CreateTable.this, "날짜를 입력해주세요", Toast.LENGTH_SHORT).show();
             return null;
         }
 
@@ -205,10 +211,10 @@ public class CreateTable extends AppCompatActivity {
         dates_raw[2] = new Date(first_day.getTime() + additional_date*2);
         dates_raw[3] = new Date(first_day.getTime() + additional_date*5);
         dates_raw[4] = new Date(first_day.getTime() + additional_date*12);
-        if (count > 5) {
+        if (count > 6) {
             dates_raw[5] = new Date(first_day.getTime() + additional_date*22);
             dates_raw[6] = new Date(first_day.getTime() + additional_date*36);
-            if (count > 7) {
+            if (count > 8) {
                 dates_raw[7] = new Date(first_day.getTime() + additional_date*57);
                 dates_raw[8] = new Date(first_day.getTime() + additional_date*87);
                 dates_raw[9] = new Date(first_day.getTime() + additional_date*147);
@@ -222,11 +228,10 @@ public class CreateTable extends AppCompatActivity {
             if (dates_raw[i] != null) {
                 dates_text[i] = date_format.format(dates_raw[i]);
             } else {
-                dates_text[i] = null;
+                dates_text[i] = "none";
             }
         }
 
-        Log.d("DB", "InflateDate 완료");
         return dates_text;
     }
 }

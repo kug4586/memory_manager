@@ -1,8 +1,18 @@
 package com.example.android_app;
 
+import android.animation.Animator;
+import android.animation.AnimatorInflater;
+import android.animation.AnimatorSet;
+import android.annotation.SuppressLint;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
+import android.view.animation.AnimationUtils;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -11,12 +21,18 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Handler;
 
 public class DailyTableAdapter
         extends RecyclerView.Adapter<DailyTableAdapter.ViewHolder>
         implements OnDailyTableClickListener {
     // DailyTable 객체들을 담아 둘 공간 -> 어댑터가 관리
     ArrayList<DailyTable> items = new ArrayList<DailyTable>();
+
+
     // OnDailyTableClickListener 인터페이스
     OnDailyTableClickListener listener;
     public void setOnItemClickListener(OnDailyTableClickListener listener) {
@@ -26,6 +42,12 @@ public class DailyTableAdapter
     public void onItemClick(ViewHolder holder, View view) {
         if (listener != null) {
             listener.onItemClick(holder, view);
+        }
+    }
+    @Override
+    public void OnLongClick(ViewHolder holder, View view, int position) {
+        if (listener != null) {
+            listener.OnLongClick(holder, view, position);
         }
     }
 
@@ -50,10 +72,12 @@ public class DailyTableAdapter
         items.clear();
     }
     // items 속 특정 아이템 삭제
-    public void RemoveItem(String item) {
-        int index = items.indexOf(item);
-        items.remove(index);
+    public void RemoveItem(int position) {
+        items.remove(position);
+        // 변경점을 갱신하기
+        notifyItemRemoved(position);
     }
+
 
     // 뷰홀더가 새로 만들어질 때, 뷰 객체를 새로 만듦
     @NonNull
@@ -75,14 +99,19 @@ public class DailyTableAdapter
         return items.size();
     }
 
+
     // 뷰홀더 클래스
     static class ViewHolder extends RecyclerView.ViewHolder {
         // 변수 설정
+        protected boolean is_flipped = false;
+
         TextView name;
         TextView count;
         ImageView clear_btn;
+        ImageView review_img;
         LinearLayout front_card;
-        LinearLayout back_card;
+        FrameLayout back_card;
+
         // 생성자
         public ViewHolder(View itemView, final OnDailyTableClickListener listener) {
             super(itemView);
@@ -90,10 +119,12 @@ public class DailyTableAdapter
             name = itemView.findViewById(R.id.TableName_of_DailyTable);
             count = itemView.findViewById(R.id.CountOfRepeat);
             clear_btn = itemView.findViewById(R.id.ClearBtn);
+            review_img = itemView.findViewById(R.id.ReviewImg);
             front_card = itemView.findViewById(R.id.FrontCard);
             back_card = itemView.findViewById(R.id.BackCard);
-            // 객체가 클릭됐을 때
-            itemView.setOnClickListener(new View.OnClickListener() {
+
+            // 앞면인 상태에서 클릭했을 때
+            front_card.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     if (listener != null) {
@@ -101,7 +132,19 @@ public class DailyTableAdapter
                     }
                 }
             });
+
+            // 복습 체크 버튼을 눌렀을 때
+            clear_btn.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    if (listener != null) {
+                        listener.OnLongClick(ViewHolder.this, view, getAdapterPosition());
+                    }
+                    return false;
+                }
+            });
         }
+
         // 뷰홀더에 데이터 설정하기
         public void setItem(DailyTable item) {
             name.setText(item.get_table_name());

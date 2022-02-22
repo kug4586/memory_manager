@@ -41,15 +41,20 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <!--카테고리 선택-->
-            <Spinner
-                android:id="@+id/category_L"
+            <LinearLayout
                 android:layout_width="150dp"
                 android:layout_height="30dp"
                 android:layout_marginStart="10dp"
                 android:background="#FFFFFF"
                 app:layout_constraintStart_toEndOf="@+id/textView"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
+                app:layout_constraintTop_toTopOf="parent">
+
+                <Spinner
+                    android:id="@+id/category_L"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+
+            </LinearLayout>
 
             <!--카테고리 삭제-->
             <ImageButton
@@ -74,9 +79,9 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/table_list"
-            android:layout_marginTop="10dp"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp" />
 
     </LinearLayout>
 
@@ -91,15 +96,22 @@
 
         <LinearLayout
             android:layout_width="290dp"
-            android:layout_height="150dp"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
             android:background="#A9BF9C">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="카테고리 만들기"
+                android:textColor="#000000"
+                android:textSize="20sp"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginTop="10dp"
                 android:layout_marginHorizontal="5dp">
 
                 <TextView
@@ -181,7 +193,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="15dp"
                 android:gravity="bottom|center">
 
                 <!--취소-->

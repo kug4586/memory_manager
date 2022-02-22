@@ -1,9 +1,11 @@
 package com.example.android_app;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,8 +24,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-
 public class TableList extends AppCompatActivity {
      public int images[][] = {
             {R.drawable.red, R.drawable.red_},
@@ -35,10 +35,11 @@ public class TableList extends AppCompatActivity {
             {R.drawable.violet, R.drawable.violet_}
     };
     public boolean is_category_open = false;
+    boolean is_first = true;
     public int color_num;
-    public String[] classified;
-    private String[] categories;
-    private String category;
+    public String[][] classified_tables;
+    public String[] categories;
+    public String category;
 
     DatabaseHelper db_helper;
 
@@ -49,6 +50,7 @@ public class TableList extends AppCompatActivity {
 
     LinearLayout create_category_screen;
     ImageButton add_category;
+    ImageButton delete_category;
     TextView create_category_cancel;
     TextView create_category_complete;
     RecyclerView table_list;
@@ -64,6 +66,7 @@ public class TableList extends AppCompatActivity {
 
         // id로 뷰 객체 불러오기
         add_category = findViewById(R.id.add_category);
+        delete_category = findViewById(R.id.delete_category);
         create_category_screen = findViewById(R.id.create_category_screen);
         create_category_cancel = findViewById(R.id.create_category_cancel);
         create_category_complete = findViewById(R.id.create_category_complete);
@@ -93,6 +96,9 @@ public class TableList extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // 설정 초기화
+                if (selected != null) {
+                    selected.setImageResource(images[color_num][0]);
+                }
                 color_num = -1;
                 selected = null;
                 category_name.setText("");
@@ -172,6 +178,7 @@ public class TableList extends AppCompatActivity {
                         // DB에 저장하기
                         db_helper.CreateCategory(name, color_num);
                         // 창 닫기
+                        SetSpinner();
                         ChangeCategoryScreen();
                         CloseKeyBoard(category_name);
                     }
@@ -191,17 +198,85 @@ public class TableList extends AppCompatActivity {
         });
 
 
-        // 카테고리 목록
-        categories = db_helper.InquiryCategory();
-        ArrayAdapter<String> category_adapter = new ArrayAdapter<String>(
-                this, android.R.layout.simple_spinner_item, categories);
-        category_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        category_L.setAdapter(category_adapter);
-        // 아이템 클릭했을 때
+        // 카테고리 삭제하기
+        delete_category.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // 초기 데이터 설정
+                String[] arr = new String[categories.length-1];
+                boolean[] check = new boolean[categories.length-1];
+                for (int i=0; i<arr.length; i++) {
+                    arr[i] = categories[i+1];
+                }
+                for (int i=0; i<check.length; i++) {
+                    check[i] = false;
+                }
+                // 대화 상자 띄우기
+                AlertDialog.Builder dlg = new AlertDialog.Builder(TableList.this);
+                dlg.setTitle("카테고리 삭제")
+                        .setMultiChoiceItems(arr, check, new DialogInterface.OnMultiChoiceClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i, boolean b) {
+                                check[i] = b;
+                            }
+                        })
+                        .setPositiveButton("삭제", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                boolean is_checked = false;
+                                for (int n=0; n<check.length; n++) {
+                                    if (check[n]) {
+                                        is_checked = true;
+                                        break;
+                                    }
+                                }
+                                if (is_checked) {
+                                    AlertDialog.Builder last = new AlertDialog.Builder(TableList.this)
+                                            .setTitle("주의!")
+                                            .setMessage("정말로 지우시겠습니까?")
+                                            .setPositiveButton("예", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialogInterface, int i) {
+                                                    for (int k=1; k<categories.length; k++) {
+                                                        if (check[k-1]) {
+                                                            db_helper.DeleteCategory(categories[k]);
+                                                        }
+                                                    }
+                                                    SetSpinner();
+                                                }
+                                            })
+                                            .setNegativeButton("아니요", null);
+                                    last.show();
+                                } else {
+                                    AlertDialog.Builder error = new AlertDialog.Builder(TableList.this)
+                                            .setMessage("선택된 카테고리가 없습니다")
+                                            .setPositiveButton("확인", null);
+                                    error.show();
+                                }
+                            }
+                        })
+                        .setNegativeButton("취소", null)
+                        .show();
+            }
+        });
+
+
+        // 카테고리 목록의 요소 클릭했을 때
         category_L.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-                category = categories[position];
+                if (is_first && category != null) {
+                    for (int i=0; i<categories.length; i++) {
+                        if (categories[i].contains(category)) {
+                            adapterView.setSelection(i);
+                        }
+                    }
+                    is_first = false;
+                } else {
+                    category = categories[position];
+                    // 리싸이클러뷰 설정하기
+                    SetRecyclerView(null, category);
+                }
             }
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {}
@@ -220,17 +295,21 @@ public class TableList extends AppCompatActivity {
                 ReviewRecord item = table_adapter.GetItem(position);
                 Intent intent = new Intent(getApplicationContext(), TableViewer.class);
                 intent.putExtra("name", item.GetTableName());
-                intent.putExtra("category", category);
+                intent.putExtra("category", item.GetCategory());
                 startActivity(intent);
             }
         });
-        // DB의 데이터를 어뎁터에 추가하기
-        classified = db_helper.InquiryTableName(null);
-        for (int i=0; i<classified.length; i++) {
-            table_adapter.AddItem(new ReviewRecord(classified[i]));
+    }
+
+    @Override
+    protected void onResume() {
+        Intent intent = getIntent();
+        if (intent.getStringExtra("category") != null) {
+            category = intent.getStringExtra("category");
         }
-        // 리싸이클러뷰에 어뎁터 설정하기
-        table_list.setAdapter(table_adapter);
+        SetSpinner();
+        SetRecyclerView(null, category);
+        super.onResume();
     }
 
     // 뒤로 가기 버튼을 눌렀을 때
@@ -251,11 +330,63 @@ public class TableList extends AppCompatActivity {
         }
     }
 
+    // 스피너의 아이템 설정하기
+    public void SetSpinner() {
+        // 만약 창으로 돌아왔을 때, 이전의 카테고리를 가진 표가 없을 경우, 종료함
+        if (table_adapter.items.size() != 0) {
+            String[][] array = db_helper.InquiryNameAndCategory(null, category);
+            if (array.length != 0) {
+                return;
+            }
+        }
+        // 카테고리 조회하기
+        categories = db_helper.InquiryCategory();
+        // 분류 없음 추가해서 배열 만들기
+        String[] arr = new String[categories.length+1];
+        for (int i=0; i<arr.length; i++) {
+            // 첫번째 인덱스는 (분류 없음)으로
+            if (i != 0) {
+                arr[i] = categories[i-1];
+            } else {
+                arr[i] = "(분류 없음)";
+            }
+        }
+        categories = arr;
+        // 스피너 설정하기
+        ArrayAdapter<String> category_adapter = new ArrayAdapter<String>(
+                this, android.R.layout.simple_spinner_item, categories);
+        category_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        category_L.setAdapter(category_adapter);
+    }
+
+    // 리싸이클러뷰의 아이템 설정하기
+    public void SetRecyclerView(String name ,String category) {
+        // 어뎁터가 비어있지 않다면
+        if (table_adapter.items.size() != 0) {
+            // 어뎁터의 데이터 모두 삭제
+            table_adapter.RemoveAllItem();
+        }
+        // (분류 없음)으로 설정했다면,
+        if (category == "(분류 없음)") {
+            // 카테고리 비우기
+            this.category = null;
+        }
+        // DB의 데이터를 어뎁터에 추가하기
+        classified_tables = db_helper.InquiryNameAndCategory(name, this.category);
+        for (int i=0; i<classified_tables.length; i++) {
+            int color = db_helper.InquiryColor(classified_tables[i][0], classified_tables[i][1]);
+            table_adapter.AddItem(
+                    new ReviewRecord(classified_tables[i][0], classified_tables[i][1], color));
+        }
+        // 리싸이클러뷰에 어뎁터 설정하기
+        table_list.setAdapter(table_adapter);
+    }
+
     // 카테고리가 이미 존재하는가
     public boolean IsInArray(String name) {
         categories = db_helper.InquiryCategory();
-        for (int i=0; i<classified.length; i++) {
-            if (classified[i].contains(name)) {
+        for (int i=0; i<classified_tables.length; i++) {
+            if (classified_tables[i][0].contains(name)) {
                 return true;
             }
         }

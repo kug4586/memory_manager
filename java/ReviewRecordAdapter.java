@@ -3,9 +3,13 @@ package com.example.android_app;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -15,17 +19,20 @@ public class ReviewRecordAdapter
         implements OnReviewRecordClickListener {
     // ReviewRecord 객체들을 담아 둘 공간 -> 어뎁터가 관리
     ArrayList<ReviewRecord> items = new ArrayList<ReviewRecord>();
+
+
     // OnReviewRecordClickListener 인터페이스
-    OnReviewRecordClickListener listener;
+    OnReviewRecordClickListener listener_1;
     public void SetItemClickListener(OnReviewRecordClickListener listener) {
-        this.listener = listener;
+        this.listener_1 = listener;
     }
     @Override
     public void OnItemClick(ViewHolder holder, View view, int position) {
-        if (listener != null) {
-            listener.OnItemClick(holder, view, position);
+        if (listener_1 != null) {
+            listener_1.OnItemClick(holder, view, position);
         }
     }
+
 
     // 어떤 아이템을 items 안에 저장
     public void AddItem(ReviewRecord item) {
@@ -43,15 +50,15 @@ public class ReviewRecordAdapter
     public void SetItem(int position, ReviewRecord item) {
         items.set(position, item);
     }
+    // items에서 특정 위치의 아이템 삭제
+    public void RemoveItem(int position) {
+        items.remove(position);
+    }
     // items 속 모든 아이템을 삭제
     public void RemoveAllItem() {
         items.clear();
     }
-    // items 속 특정 아이템 삭제
-    public void RemoveItem(String item) {
-        int index = items.indexOf(item);
-        items.remove(index);
-    }
+
 
     // 뷰홀더가 만들어질 때
     @NonNull
@@ -73,21 +80,28 @@ public class ReviewRecordAdapter
         return items.size();
     }
 
+
     // 뷰홀더 클래스
     static class ViewHolder extends RecyclerView.ViewHolder {
         // 변수 설정
+        int[] colors = {R.color.red, R.color.orange, R.color.yellow,
+            R.color.green, R.color.blue, R.color.darkblue, R.color.violet
+        };
         TextView table_name;
+        CardView review_record;
         // 생성자
-        public ViewHolder(@NonNull View itemView, final OnReviewRecordClickListener listener) {
+        public ViewHolder(@NonNull View itemView,
+                          final OnReviewRecordClickListener listener_1) {
             super(itemView);
+            // id로 객체 찾기
             table_name = itemView.findViewById(R.id.TableName_of_ReviewRecord);
+            review_record = itemView.findViewById(R.id.ReviewRecord);
             // 객체가 클릭되었을 때
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (listener != null) {
-                        int position = getAdapterPosition();
-                        listener.OnItemClick(ViewHolder.this, view, position);
+                    if (listener_1 != null) {
+                        listener_1.OnItemClick(ViewHolder.this, view, getAdapterPosition());
                     }
                 }
             });
@@ -95,6 +109,8 @@ public class ReviewRecordAdapter
         // 뷰홀더에 데이터 설정하기
         public void SetItem(ReviewRecord item) {
             table_name.setText(item.GetTableName());
+            review_record.setCardBackgroundColor(
+                    this.itemView.getContext().getColor(colors[item.GetColor()]));
         }
     }
 }
