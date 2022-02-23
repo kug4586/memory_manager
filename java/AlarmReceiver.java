@@ -65,7 +65,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         // 상단 메세지 생성
         final NotificationCompat.Builder notification_builder =
                 new NotificationCompat.Builder(context, channel_id)
-                        .setSmallIcon(R.mipmap.ic_launcher) // 아이콘 설정
+                        .setSmallIcon(R.mipmap.icon_memory_manager) // 아이콘 설정
                         .setDefaults(Notification.DEFAULT_VIBRATE) // 알림 방식식
                         .setAutoCancel(true) // 자동으로 취소됨
                         .setContentTitle("from. 메모리 매니저") // 제목
@@ -100,7 +100,7 @@ public class AlarmReceiver extends BroadcastReceiver {
             // 상단 메세지 생성
             final NotificationCompat.Builder notification_builder =
                     new NotificationCompat.Builder(context, channel_id)
-                            .setSmallIcon(R.mipmap.ic_launcher) // 아이콘 설정
+                            .setSmallIcon(R.mipmap.icon_memory_manager) // 아이콘 설정
                             .setAutoCancel(true) // 자동으로 취소됨
                             .setContentTitle("from. 메모리 매니저") // 제목
                             .setContentText("아직 오늘 복습할 것들이 남아있어요!") // 내용

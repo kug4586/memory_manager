@@ -166,7 +166,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="20dp"
-            android:hint="ex) 20220101"/>
+            android:hint="ex) 20220101"
+            android:inputType="number"/>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"

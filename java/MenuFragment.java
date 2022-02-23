@@ -145,7 +145,7 @@ public class MenuFragment extends Fragment {
         }
         for (int i=0; i<categories.length; i++) {
             adapter.AddItem(new BriefInfo(
-                    categories[i] + " (" + color_count[0][i] + ")", color_count[1][i]));
+                    categories[i] + " (" + color_count[0][i] + ")", color_count[1][i]-1));
         }
         brief_list.setAdapter(adapter);
     }

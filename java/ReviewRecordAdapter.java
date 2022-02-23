@@ -84,8 +84,9 @@ public class ReviewRecordAdapter
     // 뷰홀더 클래스
     static class ViewHolder extends RecyclerView.ViewHolder {
         // 변수 설정
-        int[] colors = {R.color.red, R.color.orange, R.color.yellow,
-            R.color.green, R.color.blue, R.color.darkblue, R.color.violet
+        int[] colors = {
+                R.color.black, R.color.red, R.color.orange, R.color.yellow,
+                R.color.green, R.color.blue, R.color.darkblue, R.color.violet
         };
         TextView table_name;
         CardView review_record;

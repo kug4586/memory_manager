@@ -97,7 +97,7 @@ public class TableList extends AppCompatActivity {
             public void onClick(View view) {
                 // 설정 초기화
                 if (selected != null) {
-                    selected.setImageResource(images[color_num][0]);
+                    selected.setImageResource(images[color_num-1][0]);
                 }
                 color_num = -1;
                 selected = null;
@@ -178,7 +178,7 @@ public class TableList extends AppCompatActivity {
                         // DB에 저장하기
                         db_helper.CreateCategory(name, color_num);
                         // 창 닫기
-                        SetSpinner();
+                        SetSpinner(true);
                         ChangeCategoryScreen();
                         CloseKeyBoard(category_name);
                     }
@@ -211,52 +211,57 @@ public class TableList extends AppCompatActivity {
                 for (int i=0; i<check.length; i++) {
                     check[i] = false;
                 }
-                // 대화 상자 띄우기
-                AlertDialog.Builder dlg = new AlertDialog.Builder(TableList.this);
-                dlg.setTitle("카테고리 삭제")
-                        .setMultiChoiceItems(arr, check, new DialogInterface.OnMultiChoiceClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i, boolean b) {
-                                check[i] = b;
-                            }
-                        })
-                        .setPositiveButton("삭제", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                boolean is_checked = false;
-                                for (int n=0; n<check.length; n++) {
-                                    if (check[n]) {
-                                        is_checked = true;
-                                        break;
+                // 만약 카테고리가 없으면
+                if (arr.length != 0) {
+                    // 대화 상자 띄우기
+                    AlertDialog.Builder dlg = new AlertDialog.Builder(TableList.this);
+                    dlg.setTitle("카테고리 삭제")
+                            .setMultiChoiceItems(arr, check, new DialogInterface.OnMultiChoiceClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i, boolean b) {
+                                    check[i] = b;
+                                }
+                            })
+                            .setPositiveButton("삭제", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    boolean is_checked = false;
+                                    for (int n=0; n<check.length; n++) {
+                                        if (check[n]) {
+                                            is_checked = true;
+                                            break;
+                                        }
+                                    }
+                                    if (is_checked) {
+                                        AlertDialog.Builder last = new AlertDialog.Builder(TableList.this)
+                                                .setTitle("주의!")
+                                                .setMessage("정말로 지우시겠습니까?")
+                                                .setPositiveButton("예", new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                                        RemoveCategory(check, arr);
+                                                        SetSpinner(false);
+                                                    }
+                                                })
+                                                .setNegativeButton("아니요", null);
+                                        last.show();
+                                    } else {
+                                        AlertDialog.Builder error = new AlertDialog.Builder(TableList.this)
+                                                .setMessage("선택된 카테고리가 없습니다")
+                                                .setPositiveButton("확인", null);
+                                        error.show();
                                     }
                                 }
-                                if (is_checked) {
-                                    AlertDialog.Builder last = new AlertDialog.Builder(TableList.this)
-                                            .setTitle("주의!")
-                                            .setMessage("정말로 지우시겠습니까?")
-                                            .setPositiveButton("예", new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialogInterface, int i) {
-                                                    for (int k=1; k<categories.length; k++) {
-                                                        if (check[k-1]) {
-                                                            db_helper.DeleteCategory(categories[k]);
-                                                        }
-                                                    }
-                                                    SetSpinner();
-                                                }
-                                            })
-                                            .setNegativeButton("아니요", null);
-                                    last.show();
-                                } else {
-                                    AlertDialog.Builder error = new AlertDialog.Builder(TableList.this)
-                                            .setMessage("선택된 카테고리가 없습니다")
-                                            .setPositiveButton("확인", null);
-                                    error.show();
-                                }
-                            }
-                        })
-                        .setNegativeButton("취소", null)
-                        .show();
+                            })
+                            .setNegativeButton("취소", null)
+                            .show();
+                } else {
+                    AlertDialog.Builder error = new AlertDialog.Builder(TableList.this)
+                            .setTitle("오류!")
+                            .setMessage("카테고리가 없습니다")
+                            .setPositiveButton("확인", null);
+                    error.show();
+                }
             }
         });
 
@@ -307,7 +312,7 @@ public class TableList extends AppCompatActivity {
         if (intent.getStringExtra("category") != null) {
             category = intent.getStringExtra("category");
         }
-        SetSpinner();
+        SetSpinner(false);
         SetRecyclerView(null, category);
         super.onResume();
     }
@@ -331,9 +336,9 @@ public class TableList extends AppCompatActivity {
     }
 
     // 스피너의 아이템 설정하기
-    public void SetSpinner() {
+    public void SetSpinner(Boolean making) {
         // 만약 창으로 돌아왔을 때, 이전의 카테고리를 가진 표가 없을 경우, 종료함
-        if (table_adapter.items.size() != 0) {
+        if (table_adapter.items.size() != 0 && !making) {
             String[][] array = db_helper.InquiryNameAndCategory(null, category);
             if (array.length != 0) {
                 return;
@@ -425,10 +430,26 @@ public class TableList extends AppCompatActivity {
         if (color != selected) {
             color.setImageResource(images[n][1]);
             if (selected != null) {
-                selected.setImageResource(images[color_num][0]);
+                selected.setImageResource(images[color_num-1][0]);
             }
             selected = color;
-            color_num = n;
+            color_num = n+1;
+        }
+    }
+
+    // 카테고리 삭제하기
+    public void RemoveCategory(boolean[] check, String[] arr) {
+        for (int k=0; k<arr.length; k++) {
+            if (check[k]) {
+                // DB에서 삭제
+                db_helper.DeleteCategory(arr[k]);
+                // ReviewRecord의 색깔 바꾸기
+                if (table_adapter.items.size() != 0) {
+                    ReviewRecord item = table_adapter.GetItem(k);
+                    item.SetColor(0);
+                    table_adapter.notifyItemChanged(k);
+                }
+            }
         }
     }
 }

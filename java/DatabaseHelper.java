@@ -45,7 +45,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // 데이터베이스 열 때
     @Override
     public void onOpen(SQLiteDatabase db) {
-        super.onOpen(db);
+        // <복습표 목록>이 없으면 만들기
+        db.execSQL("create table if not exists " + REVIEW_LIST_NAME + "("
+                + " _id integer PRIMARY KEY autoincrement, "
+                + " name text, category text, reviewed integer, today boolean, "
+                + " _1st text, _2nd text, _3rd text, _4th text, _5th text, "
+                + " _6th text, _7th text, _8th text, _9th text, _10th text "
+                + ")");
+        // <카테고리 목록>이 없으면 만들기
+        db.execSQL("create table if not exists " + CATEGORY_LIST_NAME
+                + "(_id integer PRIMARY KEY autoincrement, category text, color integer)");
     }
 
     // 데이터베이스 업그레이드 할 때
@@ -179,8 +188,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + ")";
         // 커서로 데이터 불러오기
         Cursor cursor = database.rawQuery(sql, null);
-        cursor.moveToNext();
-        int color = cursor.getInt(0);
+        int color = 0;
+        if (cursor.getCount() != 0) {
+            cursor.moveToNext();
+            color = cursor.getInt(0);
+        }
         cursor.close();
         return color;
     }

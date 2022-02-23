@@ -65,6 +65,7 @@ public class CreateTable extends AppCompatActivity {
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 // 키보드 열려있으면 닫기
                 CloseKeyBoard(table_name);
+                CloseKeyBoard(enter_date_self);
                 return true;
             }
         });
@@ -72,6 +73,15 @@ public class CreateTable extends AppCompatActivity {
 
         // 카테고리 설정
         categories = db_helper.InquiryCategory();
+        String[] arr = new String[categories.length+1];
+        for (int i=0; i<arr.length; i++) {
+            if (i != 0) {
+                arr[i] = categories[i-1];
+            } else {
+                arr[i] = "(분류 없음)";
+            }
+        }
+        categories = arr;
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, categories);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         category_T.setAdapter(adapter);
@@ -89,6 +99,7 @@ public class CreateTable extends AppCompatActivity {
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 // 키보드 열려있으면 닫기
                 CloseKeyBoard(table_name);
+                CloseKeyBoard(enter_date_self);
                 return false;
             }
         });
@@ -116,6 +127,9 @@ public class CreateTable extends AppCompatActivity {
                     Toast.makeText(CreateTable.this, "날짜를 설정해 주세요", Toast.LENGTH_SHORT).show();
                 } else {
                     try {
+                        if (category == "(분류 없음)") {
+                            category = "none";
+                        }
                         dates = InflateDate(review_count, type_of_setting_date);
                         db_helper.CreateReviewTable(table_name.getText().toString(), category, dates);
                         CloseKeyBoard(table_name);
@@ -135,6 +149,7 @@ public class CreateTable extends AppCompatActivity {
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
                 // 키보드 열려있으면 닫기
                 CloseKeyBoard(table_name);
+                CloseKeyBoard(enter_date_self);
                 // 반복 횟수 설정
                 if (i == R.id.repeat_5) {
                     review_count = 5;
@@ -151,6 +166,7 @@ public class CreateTable extends AppCompatActivity {
             public void onClick(View view) {
                 // 키보드 열려있으면 닫기
                 CloseKeyBoard(table_name);
+                CloseKeyBoard(enter_date_self);
             }
         });
 
@@ -165,10 +181,12 @@ public class CreateTable extends AppCompatActivity {
                     // 오늘 날짜
                     enter_date_self.setEnabled(false);
                     type_of_setting_date = 1;
+                    CloseKeyBoard(table_name);
                 } else if (i == R.id.date_custom) {
                     // 사용자 지정 날짜
                     enter_date_self.setEnabled(true);
                     type_of_setting_date = 2;
+                    CloseKeyBoard(table_name);
                 }
             }
         });
