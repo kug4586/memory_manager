@@ -143,7 +143,7 @@ public class CreateTable extends AppCompatActivity {
         });
 
 
-        // 아이템 클릭했을 때
+        // 복습 횟수 정하기
         count_of_repeat.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
